@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,11 +8,17 @@ public class PinsManager : MonoBehaviour
     [SerializeField] private float timeBeforeEndFrame = 3f;
     [SerializeField] private float restVelocityThreshold = 0.1f;
     [SerializeField] private float restAngularVelocityThreshold = 0.1f;
+    [SerializeField] private float settleDelay = 0.5f; // time to let pins settle between resetting them and starting new frame
 
     public static PinsManager Instance;
 
     public List<IPinEndListener> PinListeners { get; private set; }
     public bool[] PinStates { get; private set; }
+
+    private float timeTillEndOfFrame;
+    private bool isFrameReady; // frame has started and waiting for the first pin to be knocked down
+    private bool isFrameActive; // first pin has knocked down and waiting for timeout
+    private (Vector3 position, Quaternion rotation)[] startingPinLocalPositions;
 
     private void Awake()
     {
@@ -25,21 +32,33 @@ public class PinsManager : MonoBehaviour
             return;
         }
         PinListeners = new List<IPinEndListener>();
+        startingPinLocalPositions = new (Vector3, Quaternion)[pins.Length];
+        PinStates = new bool[pins.Length];
+        ResetPinStates();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        ResetTimeToEndOfFrame();
+        isFrameActive = false;
+        isFrameReady = false;
+        int i = 0;
+        foreach (Rigidbody pin in pins)
+        {
+            startingPinLocalPositions[i++] = (pin.transform.localPosition, pin.transform.localRotation);
+        }
     }
 
     void FixedUpdate()
     {
         int i = 0;
+        bool isSomePinMoving = false;
         foreach (Rigidbody pin in pins)
         {
             if (pin.velocity.magnitude <= restVelocityThreshold && pin.angularVelocity.magnitude <= restAngularVelocityThreshold)
             {
+                // this pin is not moving
                 Vector3 rotation = pin.transform.localRotation.eulerAngles;
                 float xRot = rotation.x % 360f;
                 float zRot = rotation.z % 360f;
@@ -52,10 +71,78 @@ public class PinsManager : MonoBehaviour
                     {
                         PinStates[i] = true;
                         // time to frame end resets because change detected
+                        ResetTimeToEndOfFrame();
                     }
                 }
+            } else
+            {
+                // this pin is moving, track and do appropriate action later
+                //Debug.Log(pin.name + " was moving at " + Time.time);
+                isSomePinMoving = true;
             }
             i++;
+        }
+        if (isSomePinMoving)
+        {
+            if (isFrameActive)
+            {
+                ResetTimeToEndOfFrame();
+            } else if (isFrameReady)
+            {
+                // first pin moved, begin frame
+                Debug.Log("Frame begins, first pin moved");
+                ResetTimeToEndOfFrame();
+                isFrameActive = true;
+            }
+        }
+        if (isFrameActive)
+        {
+            timeTillEndOfFrame -= Time.fixedDeltaTime;
+            if (timeTillEndOfFrame < 0)
+            {
+                Debug.Log("End of frame!");
+                isFrameActive = false;
+                isFrameReady = false;
+            }
+        }
+    }
+
+    private void ResetTimeToEndOfFrame()
+    {
+        timeTillEndOfFrame = timeBeforeEndFrame;
+    }
+
+    public void StartNextFrame()
+    {
+        Debug.Log("StartNextFrame called, preparing for next frame");
+        isFrameActive = false;
+        StartCoroutine(nameof(DelayedFrameReady));
+        ResetPins();
+    }
+
+    private IEnumerator DelayedFrameReady()
+    {
+        yield return new WaitForSecondsRealtime(settleDelay);
+        isFrameReady = true;
+    }
+
+    private void ResetPins()
+    {
+        ResetPinStates();
+        int i = 0;
+        foreach (Rigidbody pin in pins)
+        {
+            pin.transform.localPosition = startingPinLocalPositions[i].position;
+            pin.transform.localRotation = startingPinLocalPositions[i].rotation;
+            i++;
+        }
+    }
+
+    private void ResetPinStates()
+    {
+        for (int i = 0; i < PinStates.Length; i++)
+        {
+            PinStates[i] = true;
         }
     }
 }
