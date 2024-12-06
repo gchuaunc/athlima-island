@@ -1,3 +1,4 @@
+using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -22,6 +23,15 @@ public class BowlingScoreDisplay : MonoBehaviour
 
     public void UpdateScore(string[][] scores)
     {
+        // DEBUG: generate representative string
+        StringBuilder sb = new StringBuilder();
+        for (int j = 0; j < scores.Length; j++)
+        {
+            sb.Append(string.Join(',', scores[j])).Append('\t');
+        }
+        Debug.Log(sb.ToString());
+        // END DEBUG
+
         int i = 0;
         for (int j = 0; j < scores.Length; j++)
         {

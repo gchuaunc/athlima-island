@@ -21,7 +21,11 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
             enabled = false;
             return;
         }
-        rolls = new int[21]; // max 21 rolls in a game
+        rolls = new int[21]; // max 21 rolls in a game, -1 means not there yet
+        for (int i = 0; i < rolls.Length; i++)
+        {
+            rolls[i] = -1;
+        }
         currentRoll = 0;
     }
 
@@ -46,95 +50,202 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
             }
         }
 
-        rolls[currentRoll++] = knockedDown;
+        // if strike, skip next roll
+        if (currentRoll % 2 == 0 && knockedDown == 10)
+        {
+            rolls[currentRoll] = knockedDown;
+            rolls[currentRoll + 1] = 0;
+            currentRoll += 2;
+        } else
+        {
+            rolls[currentRoll++] = knockedDown;
+        }
 
         BowlingScoreDisplay.Instance.UpdateScore(GetScoreCard());
+
+        if (currentRoll != 20 && currentRoll % 2 == 0)
+        {
+            // new frame, reset pins (EXCEPT 3rd roll on 10th frame)
+            pinsManager.StartNextFrame();
+        } else
+        {
+            pinsManager.StartNextRoll();
+        }
     }
 
     public string[][] GetScoreCard()
     {
-        var scoreCard = new List<string[]>();
+        Debug.Log(string.Join(',', rolls));
+
+        // initialize score card
+        List<string[]> scoreCard = new List<string[]>();
+        for (int i = 0; i < 10; i++)
+        {
+            if (i == 10)
+            {
+                scoreCard.Add(new[] { "", "", "", "" });
+            } else
+            {
+                scoreCard.Add(new[] { "", "", "" });
+            }
+        }
+        
+        // populate score card values
         int rollIndex = 0;
         int cumulativeScore = 0;
 
         for (int frame = 0; frame < 10; frame++)
         {
-            if (frame < 9) // Frames 1-9
+            if (rolls[rollIndex] == -1) break; // done, current roll hasn't been thrown yet
+            if (frame < 9) // frames 1-9
             {
-                if (IsStrike(rollIndex))
+                // is this a completed frame?
+                if (rolls[rollIndex + 1] != -1)
                 {
-                    cumulativeScore += 10 + StrikeBonus(rollIndex);
-                    scoreCard.Add(new[] { "X", "", cumulativeScore.ToString() });
-                    rollIndex++;
-                }
-                else if (IsSpare(rollIndex))
-                {
-                    cumulativeScore += 10 + SpareBonus(rollIndex);
-                    scoreCard.Add(new[] { rolls[rollIndex].ToString(), "/", cumulativeScore.ToString() });
+                    // check for spare and strike
+                    if (IsStrike(rollIndex))
+                    {
+                        try
+                        {
+                            cumulativeScore += 10 + StrikeBonus(rollIndex);
+                            scoreCard[frame][0] = "";
+                            scoreCard[frame][1] = "X";
+                            scoreCard[frame][2] = cumulativeScore.ToString();
+                        } catch (System.InvalidOperationException)
+                        {
+                            scoreCard[frame][0] = "";
+                            scoreCard[frame][1] = "X";
+                            scoreCard[frame][2] = "";
+                        }
+                    }
+                    else if (IsSpare(rollIndex))
+                    {
+                        try
+                        {
+                            cumulativeScore += 10 + SpareBonus(rollIndex);
+                            scoreCard[frame][0] = "";
+                            scoreCard[frame][1] = "X";
+                            scoreCard[frame][2] = cumulativeScore.ToString();
+                        }
+                        catch (System.InvalidOperationException)
+                        {
+                            scoreCard[frame][0] = "";
+                            scoreCard[frame][1] = "X";
+                            scoreCard[frame][2] = "";
+                        }
+                    } else
+                    {
+                        scoreCard[frame][0] = rolls[rollIndex].ToString();
+                        scoreCard[frame][1] = rolls[rollIndex + 1].ToString();
+                        cumulativeScore += rolls[rollIndex] + rolls[rollIndex + 1];
+                        scoreCard[frame][2] = cumulativeScore.ToString();
+                    }
                     rollIndex += 2;
                 }
                 else
                 {
-                    int frameScore = rolls[rollIndex] + rolls[rollIndex + 1];
-                    cumulativeScore += frameScore;
-                    scoreCard.Add(new[]
-                    {
-                        rolls[rollIndex].ToString(),
-                        rolls[rollIndex + 1].ToString(),
-                        cumulativeScore.ToString()
-                    });
-                    rollIndex += 2;
+                    // incomplete frame (awaiting roll 2)
+                    scoreCard[frame][0] = rolls[rollIndex].ToString();
+                    break; // done now
                 }
             }
             else // 10th frame
             {
-                var frameRolls = new List<string>();
-                for (int i = 0; i < 3 && rollIndex < currentRoll; i++)
+                for (int i = 0; i < 3; i++)
                 {
-                    if (rolls[rollIndex] == 10) frameRolls.Add("X");
-                    else if (i > 0 && rolls[rollIndex - 1] + rolls[rollIndex] == 10) frameRolls.Add("/");
-                    else frameRolls.Add(rolls[rollIndex].ToString());
+                    if (rolls[rollIndex] == -1) break; // done, current roll hasn't been thrown
+                    if (rolls[rollIndex] == 10)
+                    {
+                        scoreCard[frame][i] = "X";
+                    } else if (i > 0 && rolls[rollIndex - 1] + rolls[rollIndex] == 10)
+                    {
+                        scoreCard[frame][i] = "/";
+                    } else
+                    {
+                        scoreCard[frame][i] = rolls[rollIndex].ToString();
+                    }
                     rollIndex++;
                 }
 
-                cumulativeScore += CalculateFrameScoreForTenthFrame();
-                frameRolls.Add(cumulativeScore.ToString());
-                scoreCard.Add(frameRolls.ToArray());
+                if (scoreCard[frame][0] == "X" || scoreCard[frame][1] == "/")
+                {
+                    // eligible for 3rd throw, is it complete?
+                    if (rolls[rolls.Length - 1] != -1)
+                    {
+                        // done with third throw completed
+                        cumulativeScore += CalculateFrameScoreForTenthFrame();
+                        scoreCard[frame][3] = scoreCard[frame][2]; // move 3rd throw score to correct location
+                        scoreCard[frame][2] = cumulativeScore.ToString();
+                    }
+                } else
+                {
+                    // done, ineligible for 3rd throw
+                    cumulativeScore += CalculateFrameScoreForTenthFrame();
+                    scoreCard[frame][2] = cumulativeScore.ToString();
+                }
             }
         }
 
         return scoreCard.ToArray();
     }
 
+    // Helper methods
     private int CalculateFrameScoreForTenthFrame()
     {
-        return rolls[rolls.Length - 1] + rolls[rolls.Length - 2] + rolls[rolls.Length - 3]; // TODO: spare and strike scoring
-        int score = 0;
-        for (int i = 0; i < 3 && currentRoll > i; i++)
+        if (rolls[rolls.Length - 3] == -1 || rolls[rolls.Length - 2] == -1)
         {
-            score += rolls[currentRoll - 3 + i];
+            throw new System.InvalidOperationException("Rolls had not been thrown yet while calculating 10th frame score");
         }
-        return score;
+        if (rolls[rolls.Length - 1] == -1)
+        {
+            return rolls[rolls.Length - 2] + rolls[rolls.Length - 3];
+        } else
+        {
+            return rolls[rolls.Length - 1] + rolls[rolls.Length - 2] + rolls[rolls.Length - 3];
+        }
     }
 
-    // Helper methods
     private bool IsStrike(int rollIndex)
     {
-        return rolls[rollIndex] == 10;
+        if (rollIndex % 2 != 0)
+        {
+            throw new System.ArgumentException("rollIndex " + rollIndex + " was not aligned to a frame!");
+        }
+        return rolls[rollIndex] == 10 && rolls[rollIndex + 1] == 0;
     }
 
     private int StrikeBonus(int rollIndex)
     {
+        if (rollIndex % 2 != 0)
+        {
+            throw new System.ArgumentException("rollIndex " + rollIndex + " was not aligned to a frame!");
+        }
+        if (rolls[rollIndex + 2] == -1 || rolls[rollIndex + 3] == -1)
+        {
+            throw new System.InvalidOperationException("Rolls had not been thrown yet while calculating strike bonus for " + rollIndex);
+        }
         return rolls[rollIndex + 2] + rolls[rollIndex + 3];
     }
 
     private bool IsSpare(int rollIndex)
     {
+        if (rollIndex % 2 != 0)
+        {
+            throw new System.ArgumentException("rollIndex " + rollIndex + " was not aligned to a frame!");
+        }
         return rolls[rollIndex] + rolls[rollIndex + 1] == 10;
     }
 
     private int SpareBonus(int rollIndex)
     {
+        if (rollIndex % 2 != 0)
+        {
+            throw new System.ArgumentException("rollIndex " + rollIndex + " was not aligned to a frame!");
+        }
+        if (rolls[rollIndex + 2] == -1 )
+        {
+            throw new System.InvalidOperationException("Roll had not been thrown yet while calculating spare bonus for " + rollIndex);
+        }
         return rolls[rollIndex + 2];
     }
 }

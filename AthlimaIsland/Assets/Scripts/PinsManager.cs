@@ -114,6 +114,9 @@ public class PinsManager : MonoBehaviour
         timeTillEndOfFrame = timeBeforeEndFrame;
     }
 
+    /// <summary>
+    /// Start first roll on frame (new frame).
+    /// </summary>
     public void StartNextFrame()
     {
         Debug.Log("StartNextFrame called, preparing for next frame");
@@ -121,6 +124,16 @@ public class PinsManager : MonoBehaviour
         PreviousPinStates = (bool[])PinStates.Clone();
         StartCoroutine(nameof(DelayedFrameReady));
         ResetPins();
+    }
+
+    /// <summary>
+    /// Start second roll on frame.
+    /// </summary>
+    public void StartNextRoll()
+    {
+        Debug.Log("StartNextRoll called, preparing for next roll");
+        isFrameActive = false;
+        StartCoroutine(nameof(DelayedFrameReady));
     }
 
     private IEnumerator DelayedFrameReady()
