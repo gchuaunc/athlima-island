@@ -11,10 +11,10 @@ public class PinsManager : MonoBehaviour
     [SerializeField] private float settleDelay = 0.5f; // time to let pins settle between resetting them and starting new frame
 
     public static PinsManager Instance;
+    public bool[] PinStates { get; private set; } // true = knocked down
+    public bool[] PreviousPinStates { get; private set; }
 
-    public List<IPinEndListener> PinListeners { get; private set; }
-    public bool[] PinStates { get; private set; }
-
+    private List<IPinEndListener> pinListeners;
     private float timeTillEndOfFrame;
     private bool isFrameReady; // frame has started and waiting for the first pin to be knocked down
     private bool isFrameActive; // first pin has knocked down and waiting for timeout
@@ -31,9 +31,10 @@ public class PinsManager : MonoBehaviour
             enabled = false;
             return;
         }
-        PinListeners = new List<IPinEndListener>();
+        pinListeners = new List<IPinEndListener>();
         startingPinLocalPositions = new (Vector3, Quaternion)[pins.Length];
         PinStates = new bool[pins.Length];
+        PreviousPinStates = new bool[pins.Length];
         ResetPinStates();
     }
 
@@ -103,6 +104,7 @@ public class PinsManager : MonoBehaviour
                 Debug.Log("End of frame!");
                 isFrameActive = false;
                 isFrameReady = false;
+                NotifyPinListeners();
             }
         }
     }
@@ -116,6 +118,7 @@ public class PinsManager : MonoBehaviour
     {
         Debug.Log("StartNextFrame called, preparing for next frame");
         isFrameActive = false;
+        PreviousPinStates = (bool[])PinStates.Clone();
         StartCoroutine(nameof(DelayedFrameReady));
         ResetPins();
     }
@@ -132,8 +135,7 @@ public class PinsManager : MonoBehaviour
         int i = 0;
         foreach (Rigidbody pin in pins)
         {
-            pin.transform.localPosition = startingPinLocalPositions[i].position;
-            pin.transform.localRotation = startingPinLocalPositions[i].rotation;
+            pin.transform.SetLocalPositionAndRotation(startingPinLocalPositions[i].position, startingPinLocalPositions[i].rotation);
             i++;
         }
     }
@@ -142,7 +144,26 @@ public class PinsManager : MonoBehaviour
     {
         for (int i = 0; i < PinStates.Length; i++)
         {
-            PinStates[i] = true;
+            PinStates[i] = false;
+        }
+    }
+
+    public void RegisterPinListener(IPinEndListener listener)
+    {
+        Debug.Log("Registering pin end listener " + listener);
+        pinListeners.Add(listener);
+    }
+
+    public void DeregisterPinListener(IPinEndListener listener)
+    {
+        pinListeners.Remove(listener);
+    }
+
+    private void NotifyPinListeners()
+    {
+        foreach (IPinEndListener pinListener in pinListeners)
+        {
+            pinListener?.OnPinEnd();
         }
     }
 }
