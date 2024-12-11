@@ -1,3 +1,4 @@
+using Oculus.Interaction;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -57,29 +58,25 @@ public class PinsManager : MonoBehaviour
         bool isSomePinMoving = false;
         foreach (Rigidbody pin in pins)
         {
-            if (pin.velocity.magnitude <= restVelocityThreshold && pin.angularVelocity.magnitude <= restAngularVelocityThreshold)
+            if (!PinStates[i] && pin.velocity.magnitude > restVelocityThreshold && pin.angularVelocity.magnitude > restAngularVelocityThreshold)
             {
-                // this pin is not moving
+                // this (un-knocked down) pin is moving, track and do appropriate action later
+                isSomePinMoving = true;
+            }
+
+            // only check pins that are not already down for being knocked down
+            if (!PinStates[i])
+            {
                 Vector3 rotation = pin.transform.localRotation.eulerAngles;
-                float xRot = rotation.x % 360f;
-                float zRot = rotation.z % 360f;
-                bool isXDown = Mathf.Abs(xRot) > 45f && Mathf.Abs(360 - xRot) > 45f;
-                bool isZDown = Mathf.Abs(zRot) > 45f && Mathf.Abs(360 - zRot) > 45f;
+                float xRot = rotation.x;
+                float zRot = rotation.z;
+                bool isXDown = xRot > 45f && xRot < 315f;
+                bool isZDown = zRot > 45f && zRot < 315f;
                 if (isXDown || isZDown)
                 {
-                    //Debug.Log("pin " + pin.gameObject.name + " knocked down xr=" + xRot + " zr=" + zRot);
-                    if (!PinStates[i])
-                    {
-                        PinStates[i] = true;
-                        // time to frame end resets because change detected
-                        ResetTimeToEndOfFrame();
-                    }
+                    PinStates[i] = true;
+                    ResetTimeToEndOfFrame(); // time to frame end resets because pin was just knocked down
                 }
-            } else
-            {
-                // this pin is moving, track and do appropriate action later
-                //Debug.Log(pin.name + " was moving at " + Time.time);
-                isSomePinMoving = true;
             }
             i++;
         }
@@ -101,7 +98,7 @@ public class PinsManager : MonoBehaviour
             timeTillEndOfFrame -= Time.fixedDeltaTime;
             if (timeTillEndOfFrame < 0)
             {
-                Debug.Log("End of frame!");
+                Debug.Log("End of frame! Current=" + string.Join(',', PinStates) + " Prev=" + string.Join(',', PreviousPinStates));
                 isFrameActive = false;
                 isFrameReady = false;
                 NotifyPinListeners();
@@ -121,7 +118,7 @@ public class PinsManager : MonoBehaviour
     {
         Debug.Log("StartNextFrame called, preparing for next frame");
         isFrameActive = false;
-        PreviousPinStates = (bool[])PinStates.Clone();
+        PreviousPinStates = new bool[pins.Length];
         StartCoroutine(nameof(DelayedFrameReady));
         ResetPins();
     }
@@ -133,6 +130,7 @@ public class PinsManager : MonoBehaviour
     {
         Debug.Log("StartNextRoll called, preparing for next roll");
         isFrameActive = false;
+        PreviousPinStates = (bool[])PinStates.Clone();
         StartCoroutine(nameof(DelayedFrameReady));
     }
 

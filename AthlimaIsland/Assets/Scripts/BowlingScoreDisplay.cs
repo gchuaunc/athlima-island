@@ -24,7 +24,7 @@ public class BowlingScoreDisplay : MonoBehaviour
     public void UpdateScore(string[][] scores)
     {
         // DEBUG: generate representative string
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("UpdateScore scores[][]=");
         for (int j = 0; j < scores.Length; j++)
         {
             sb.Append(string.Join(',', scores[j])).Append('\t');
@@ -38,7 +38,7 @@ public class BowlingScoreDisplay : MonoBehaviour
             scoreTexts[i++].text = scores[j][0];
             scoreTexts[i++].text = scores[j][1];
             scoreTexts[i++].text = scores[j][2];
-            if (j == 10)
+            if (j == 9)
             {
                 scoreTexts[i++].text = scores[j][3];
             }

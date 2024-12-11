@@ -33,6 +33,7 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
     {
         pinsManager = PinsManager.Instance;
         pinsManager.RegisterPinListener(this);
+        BowlingScoreDisplay.Instance.UpdateScore(GetScoreCard());
     }
 
     public void OnPinEnd()
@@ -50,22 +51,69 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
             }
         }
 
-        // if strike, skip next roll
-        if (currentRoll % 2 == 0 && knockedDown == 10)
+        // 10th frame logic
+        if (currentRoll >= 18)
         {
             rolls[currentRoll] = knockedDown;
-            rolls[currentRoll + 1] = 0;
-            currentRoll += 2;
+            switch (currentRoll)
+            {
+                case 18:
+                    if (knockedDown == 10)
+                    {
+                        // strike on roll 1, 2 more rolls granted
+                        pinsManager.StartNextFrame();
+                    } else
+                    {
+                        // maybe spare
+                        pinsManager.StartNextRoll();
+                    }
+                    break;
+                case 19:
+                    if (knockedDown == 10)
+                    {
+                        // strike or spare, third roll granted
+                        pinsManager.StartNextFrame();
+                    } else
+                    {
+                        if (rolls[currentRoll - 1] == 10)
+                        {
+                            // third roll granted because previous was strike
+                            pinsManager.StartNextRoll();
+                        } else
+                        {
+                            // done with game
+                            rolls[currentRoll + 1] = 0;
+                            currentRoll++; // TODO: more elegant way to do this
+                        }
+                    }
+                    break;
+                case 20:
+                    // TODO: end game
+                    break;
+            }
+            currentRoll++;
         } else
         {
-            rolls[currentRoll++] = knockedDown;
+            // frames 1-9
+            // if strike, skip next roll
+            if (currentRoll % 2 == 0 && knockedDown == 10)
+            {
+                rolls[currentRoll] = knockedDown;
+                rolls[currentRoll + 1] = 0;
+                currentRoll += 2;
+            }
+            else
+            {
+                rolls[currentRoll++] = knockedDown;
+            }
         }
 
         BowlingScoreDisplay.Instance.UpdateScore(GetScoreCard());
 
-        if (currentRoll != 20 && currentRoll % 2 == 0)
+        // only do below if frame 1-9; frame 10 is handled above
+        if (currentRoll < 18 && currentRoll != 20 && currentRoll % 2 == 0)
         {
-            // new frame, reset pins (EXCEPT 3rd roll on 10th frame)
+            // new frame, reset pins
             pinsManager.StartNextFrame();
         } else
         {
@@ -81,7 +129,7 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
         List<string[]> scoreCard = new List<string[]>();
         for (int i = 0; i < 10; i++)
         {
-            if (i == 10)
+            if (i == 9)
             {
                 scoreCard.Add(new[] { "", "", "", "" });
             } else
@@ -123,14 +171,14 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
                         try
                         {
                             cumulativeScore += 10 + SpareBonus(rollIndex);
-                            scoreCard[frame][0] = "";
-                            scoreCard[frame][1] = "X";
+                            scoreCard[frame][0] = rolls[rollIndex].ToString();
+                            scoreCard[frame][1] = "/";
                             scoreCard[frame][2] = cumulativeScore.ToString();
                         }
                         catch (System.InvalidOperationException)
                         {
-                            scoreCard[frame][0] = "";
-                            scoreCard[frame][1] = "X";
+                            scoreCard[frame][0] = rolls[rollIndex].ToString();
+                            scoreCard[frame][1] = "/";
                             scoreCard[frame][2] = "";
                         }
                     } else
