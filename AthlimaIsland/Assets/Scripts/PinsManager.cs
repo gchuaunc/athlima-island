@@ -146,6 +146,8 @@ public class PinsManager : MonoBehaviour
         int i = 0;
         foreach (Rigidbody pin in pins)
         {
+            pin.velocity = Vector3.zero;
+            pin.angularVelocity = Vector3.zero;
             pin.transform.SetLocalPositionAndRotation(startingPinLocalPositions[i].position, startingPinLocalPositions[i].rotation);
             i++;
         }

@@ -90,6 +90,9 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
                 case 20:
                     // TODO: end game
                     break;
+                default:
+                    Debug.Log("ERROR when processing 10th frame logic; currentRoll was not 18-20" + currentRoll);
+                    break;
             }
             currentRoll++;
         } else
@@ -111,13 +114,16 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
         BowlingScoreDisplay.Instance.UpdateScore(GetScoreCard());
 
         // only do below if frame 1-9; frame 10 is handled above
-        if (currentRoll < 18 && currentRoll != 20 && currentRoll % 2 == 0)
+        if (currentRoll < 19)
         {
-            // new frame, reset pins
-            pinsManager.StartNextFrame();
-        } else
-        {
-            pinsManager.StartNextRoll();
+            if (currentRoll % 2 == 0)
+            {
+                // new frame, reset pins
+                pinsManager.StartNextFrame();
+            } else
+            {
+                pinsManager.StartNextRoll();
+            }
         }
     }
 
@@ -259,6 +265,10 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
         {
             throw new System.ArgumentException("rollIndex " + rollIndex + " was not aligned to a frame!");
         }
+        if (rolls[rollIndex] == -1 || rolls[rollIndex + 1] == -1)
+        {
+            throw new System.InvalidOperationException("Rolls had not been thrown yet while determining if " + rollIndex + " is a strike");
+        }
         return rolls[rollIndex] == 10 && rolls[rollIndex + 1] == 0;
     }
 
@@ -272,7 +282,27 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
         {
             throw new System.InvalidOperationException("Rolls had not been thrown yet while calculating strike bonus for " + rollIndex);
         }
-        return rolls[rollIndex + 2] + rolls[rollIndex + 3];
+        if (rollIndex == 16)
+        {
+            // frame 9 special logic, always grab these ones
+            return rolls[rollIndex + 2] + rolls[rollIndex + 3];
+        }
+        else
+        {
+            // frame 1-8
+            if (IsStrike(rollIndex + 2))
+            {
+                if (rolls[rollIndex + 4] == -1)
+                {
+                    throw new System.InvalidOperationException("Rolls had not been thrown yet while calculating strike bonus for " + rollIndex);
+                }
+                return rolls[rollIndex + 2] + rolls[rollIndex + 4];
+            }
+            else
+            {
+                return rolls[rollIndex + 2] + rolls[rollIndex + 3];
+            }
+        }
     }
 
     private bool IsSpare(int rollIndex)
