@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 4144283845160679315}
   - component: {fileID: 5537796546423024111}
   m_Layer: 0
-  m_Name: DistanceGrabbableSphere
-  m_TagString: Untagged
+  m_Name: BlueBowlingBall
+  m_TagString: BowlingBall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

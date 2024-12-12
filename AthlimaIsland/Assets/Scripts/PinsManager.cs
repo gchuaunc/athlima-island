@@ -10,6 +10,7 @@ public class PinsManager : MonoBehaviour
     [SerializeField] private float restVelocityThreshold = 0.1f;
     [SerializeField] private float restAngularVelocityThreshold = 0.1f;
     [SerializeField] private float settleDelay = 0.5f; // time to let pins settle between resetting them and starting new frame
+    [SerializeField] private BowlingBlocker bowlingBlocker; // for raising blocker after start of roll / frame
 
     public static PinsManager Instance;
     public bool[] PinStates { get; private set; } // true = knocked down
@@ -88,9 +89,7 @@ public class PinsManager : MonoBehaviour
             } else if (isFrameReady)
             {
                 // first pin moved, begin frame
-                Debug.Log("Frame begins, first pin moved");
-                ResetTimeToEndOfFrame();
-                isFrameActive = true;
+                FrameActive();
             }
         }
         if (isFrameActive)
@@ -106,9 +105,24 @@ public class PinsManager : MonoBehaviour
         }
     }
 
+    // called both internally and by detectors
+    public void FrameActive()
+    {
+        Debug.Log("Frame begins, first pin moved OR detector sensed ball in area");
+        ResetTimeToEndOfFrame();
+        isFrameActive = true;
+    }
+
     private void ResetTimeToEndOfFrame()
     {
         timeTillEndOfFrame = timeBeforeEndFrame;
+    }
+
+    private void DestroyAllBowlingBalls()
+    {
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("BowlingBall")) {
+            Destroy(obj);
+        }
     }
 
     /// <summary>
@@ -121,6 +135,7 @@ public class PinsManager : MonoBehaviour
         PreviousPinStates = new bool[pins.Length];
         StartCoroutine(nameof(DelayedFrameReady));
         ResetPins();
+        DestroyAllBowlingBalls();
     }
 
     /// <summary>
@@ -132,12 +147,14 @@ public class PinsManager : MonoBehaviour
         isFrameActive = false;
         PreviousPinStates = (bool[])PinStates.Clone();
         StartCoroutine(nameof(DelayedFrameReady));
+        DestroyAllBowlingBalls();
     }
 
     private IEnumerator DelayedFrameReady()
     {
         yield return new WaitForSecondsRealtime(settleDelay);
         isFrameReady = true;
+        bowlingBlocker.RaiseBlocker();
     }
 
     private void ResetPins()
