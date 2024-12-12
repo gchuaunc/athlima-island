@@ -1966,7 +1966,7 @@ MonoBehaviour:
   hapticClip: {fileID: 2460798210113038985, guid: a77c9d6804063b17bcf7e7e2256e42fb,
     type: 3}
   pinsManager: {fileID: 3480878230626149509}
-  action: 0
+  action: 2
   ballPrefab: {fileID: 5424318148643977034, guid: ecce76c9d0734eb42b2e025caa441699,
     type: 3}
 --- !u!23 &221154543
@@ -15459,7 +15459,7 @@ MonoBehaviour:
   hapticClip: {fileID: 2460798210113038985, guid: a77c9d6804063b17bcf7e7e2256e42fb,
     type: 3}
   pinsManager: {fileID: 3480878230626149509}
-  action: 1
+  action: 3
   ballPrefab: {fileID: 5424318148643977034, guid: ecce76c9d0734eb42b2e025caa441699,
     type: 3}
 --- !u!23 &1684359340
@@ -29060,6 +29060,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DistanceGrabbableSphere
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424318148643977034, guid: ecce76c9d0734eb42b2e025caa441699,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
