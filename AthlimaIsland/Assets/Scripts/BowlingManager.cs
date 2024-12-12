@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class BowlingManager : MonoBehaviour, IPinEndListener
 {
+    [SerializeField] private GameObject gameEndPanel;
+
     public static BowlingManager Instance { get; private set; }
 
     private PinsManager pinsManager; // cache instance
@@ -83,12 +85,13 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
                         {
                             // done with game
                             rolls[currentRoll + 1] = 0;
-                            currentRoll++; // TODO: more elegant way to do this
+                            currentRoll++;
+                            ShowEndGamePanel();
                         }
                     }
                     break;
                 case 20:
-                    // TODO: end game
+                    ShowEndGamePanel();
                     break;
                 default:
                     Debug.Log("ERROR when processing 10th frame logic; currentRoll was not 18-20" + currentRoll);
@@ -125,6 +128,11 @@ public class BowlingManager : MonoBehaviour, IPinEndListener
                 pinsManager.StartNextRoll();
             }
         }
+    }
+
+    private void ShowEndGamePanel()
+    {
+        gameEndPanel.SetActive(true);
     }
 
     public string[][] GetScoreCard()
