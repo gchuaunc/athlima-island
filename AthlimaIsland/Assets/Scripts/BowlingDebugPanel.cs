@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BowlingDebugPanel : RayTappableObject
 {
@@ -6,7 +7,7 @@ public class BowlingDebugPanel : RayTappableObject
     [SerializeField] private Action action;
     [SerializeField] private GameObject ballPrefab;
 
-    public enum Action { StartNextFrame, SpawnBall }
+    public enum Action { StartNextFrame, SpawnBall, ReloadScene, BackToLobby }
 
     protected override void TriggerAction()
     {
@@ -18,7 +19,14 @@ public class BowlingDebugPanel : RayTappableObject
                 pinsManager.StartNextFrame();
                 break;
             case Action.SpawnBall:
-                Instantiate(ballPrefab, new Vector3(1, 1, 3), Quaternion.identity);
+                pinsManager.DestroyAllBowlingBalls();
+                pinsManager.SummonNewBall();
+                break;
+            case Action.ReloadScene:
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                break;
+            case Action.BackToLobby:
+                SceneManager.LoadScene("Lobby");
                 break;
         }
     }

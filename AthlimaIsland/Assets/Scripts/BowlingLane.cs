@@ -1,21 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class BowlingLane : MonoBehaviour
 {
-    public int laneNumber;
-    [SerializeField] public GameObject text;
+    [SerializeField] private int laneNumber;
+    [SerializeField] private TMP_Text text;
 
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        text.text = laneNumber.ToString();
     }
 }
