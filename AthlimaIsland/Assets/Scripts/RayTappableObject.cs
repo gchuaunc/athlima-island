@@ -29,12 +29,17 @@ public abstract class RayTappableObject : MonoBehaviour
         }
         if (currentState == InteractableState.Normal)
         {
-            hoverObject.SetActive(false);
+            this.SetHover(false);
         } else if (currentState == InteractableState.Select || currentState == InteractableState.Hover)
         {
-            hoverObject.SetActive(true);
+            this.SetHover(true);
         }
         previousState = currentState;
+    }
+
+    public virtual void SetHover(bool hover)
+    {
+        hoverObject.SetActive(hover);
     }
 
     protected virtual void TriggerAction()

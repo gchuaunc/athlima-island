@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public enum Action { StartNextFrame, SpawnBall }
-
 public class BowlingDebugPanel : RayTappableObject
 {
     [SerializeField] private PinsManager pinsManager;
     [SerializeField] private Action action;
     [SerializeField] private GameObject ballPrefab;
+
+    public enum Action { StartNextFrame, SpawnBall }
 
     protected override void TriggerAction()
     {
