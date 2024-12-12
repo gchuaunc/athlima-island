@@ -6,14 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Bowling_old.unity
+    guid: da9a4aa6bb43b7e448427d68fa8f2817
+  - enabled: 1
     path: Assets/Scenes/Lobby.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/Bowling.unity
-    guid: da9a4aa6bb43b7e448427d68fa8f2817
-  - enabled: 1
     path: Assets/Scenes/Golf.unity
     guid: cd95a7eee3d7f3e488b031b31d3a5438
+  - enabled: 1
+    path: Assets/Scenes/Bowling.unity
+    guid: 7cc37bfdf86600746b742be5e568089a
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: e73690b2235305240b1afa849a72de39,
       type: 2}
