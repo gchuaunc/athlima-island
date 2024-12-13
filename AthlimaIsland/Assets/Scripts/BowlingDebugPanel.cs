@@ -4,10 +4,11 @@ using UnityEngine.SceneManagement;
 public class BowlingDebugPanel : RayTappableObject
 {
     [SerializeField] private PinsManager pinsManager;
+    [SerializeField] private BowlingLane bowlingLane;
     [SerializeField] private Action action;
     [SerializeField] private GameObject ballPrefab;
 
-    public enum Action { StartNextFrame, SpawnBall, ReloadScene, BackToLobby }
+    public enum Action { StartNextFrame, SpawnBall, ReloadScene, BackToLobby, GuardRails }
 
     protected override void TriggerAction()
     {
@@ -27,6 +28,9 @@ public class BowlingDebugPanel : RayTappableObject
                 break;
             case Action.BackToLobby:
                 SceneManager.LoadScene("Lobby");
+                break;
+            case Action.GuardRails:
+                bowlingLane.ToggleGuardRails();
                 break;
         }
     }
