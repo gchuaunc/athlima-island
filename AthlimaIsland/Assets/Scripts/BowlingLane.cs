@@ -22,7 +22,7 @@ public class BowlingLane : MonoBehaviour
         foreach (GameObject guardRail in guardRails) {
             guardRail.GetComponent<Transform>().localPosition = new Vector3(
                 guardRail.GetComponent<Transform>().localPosition.x,
-                Mathf.Clamp(guardRail.GetComponent<Transform>().localPosition.y + Time.deltaTime * 0.5f * (guardRailsUp ? 1 : -1), -0.51f, 0),
+                Mathf.Clamp(guardRail.GetComponent<Transform>().localPosition.y + Time.deltaTime * 0.5f * (guardRailsUp ? 1 : -1), -0.7f, 0),
                 guardRail.GetComponent<Transform>().localPosition.z
                 );
         }

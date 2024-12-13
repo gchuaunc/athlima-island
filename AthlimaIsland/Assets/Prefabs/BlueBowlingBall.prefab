@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thisRigidbody: {fileID: 4144283845160679315}
-  velocityThrowMultiplier: 20
+  velocityThrowMultiplier: 50
   maxDistanceToCamera: 3
 --- !u!114 &3872712411511096581
 MonoBehaviour:

@@ -15,7 +15,7 @@ public class BowlingBall : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Debug.Log(GetComponent<Rigidbody>().velocity.magnitude);
+        //Debug.Log(GetComponent<Rigidbody>().velocity.magnitude);
 
         if (onFloor && GetComponent<Rigidbody>().velocity.sqrMagnitude > .1)
         {
