@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,11 +14,11 @@ public class CubeButton : MonoBehaviour
 
     public Action action;
 
-    public enum Action { GO_GOLF, GO_BOWLING, GO_LOBBY }
+    public enum Action { GO_GOLF, GO_BOWLING, GO_LOBBY, GO_GOLF_L2 }
 
     void Start()
     {
-        GetComponentInChildren<TextMeshProUGUI>().text = text;
+        GetComponentInChildren<TMP_Text>().text = text;
     }
 
     void Update()
@@ -71,6 +68,9 @@ public class CubeButton : MonoBehaviour
                 break;
             case Action.GO_GOLF:
                 SceneManager.LoadScene("Golf");
+                break;
+            case Action.GO_GOLF_L2:
+                SceneManager.LoadScene("Level 2");
                 break;
         }
     }

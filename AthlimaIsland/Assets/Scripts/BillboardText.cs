@@ -4,18 +4,23 @@ using UnityEngine;
 
 public class BillboardText : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public bool yUp = true;
+    [SerializeField] private bool yUp = true;
+    [SerializeField] private RectTransform rectTransform;
+
+    private Camera mainCamera; // cache for performance
+
+    private void Start()
+    {
+        mainCamera = Camera.main;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        // Might want to change this to Camera.main
-        Camera camera = Camera.current;
-
-        GetComponent<RectTransform>().LookAt(camera.transform);
+        rectTransform.LookAt((2 * transform.position) - mainCamera.transform.position);
         if (yUp)
         {
-            GetComponent<RectTransform>().rotation = Quaternion.Euler(0, GetComponent<RectTransform>().rotation.eulerAngles.y, 0);
+            rectTransform.rotation = Quaternion.Euler(0, rectTransform.rotation.eulerAngles.y, 0);
         }
     }
 }
