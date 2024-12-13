@@ -5546,7 +5546,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6465165094045830580, guid: 533c7d6d9ee9a3842ba14a72ef4d6c72,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 533c7d6d9ee9a3842ba14a72ef4d6c72, type: 3}
 --- !u!4 &1032095970 stripped
 Transform:
@@ -10080,21 +10084,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8249154478881376803, guid: 533c7d6d9ee9a3842ba14a72ef4d6c72,
         type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 8249154478881376803, guid: 533c7d6d9ee9a3842ba14a72ef4d6c72,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8249154478881376803, guid: 533c7d6d9ee9a3842ba14a72ef4d6c72,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 8249154478881376803, guid: 533c7d6d9ee9a3842ba14a72ef4d6c72,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -10143,15 +10132,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8688170033834021574, guid: 533c7d6d9ee9a3842ba14a72ef4d6c72,
-        type: 3}
-      propertyPath: text
-      value: Golf
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6465165094045830580, guid: 533c7d6d9ee9a3842ba14a72ef4d6c72,
+        type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 533c7d6d9ee9a3842ba14a72ef4d6c72, type: 3}
 --- !u!4 &1979828426 stripped
 Transform:
