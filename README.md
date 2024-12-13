@@ -8,8 +8,8 @@ See the `AthlimaIsland/` folder for the Unity project.
 ## Links
 
 - [Demo video (YouTube)](https://www.youtube.com/watch?v=VXwKhjz48Iw)
-
 - [Latest build](https://github.com/gchuaunc/athlima-island/releases/tag/v0.2)
+- [Game design document](https://docs.google.com/document/d/1gvu2F3gKH0GtKuKFMrxkykR1Q2ozOP3gYcQDcLEvfk0/edit?tab=t.0)
 
 ## Controls
 
