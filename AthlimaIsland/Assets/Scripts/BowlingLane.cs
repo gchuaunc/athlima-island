@@ -25,7 +25,6 @@ public class BowlingLane : MonoBehaviour
                 Mathf.Clamp(guardRail.GetComponent<Transform>().localPosition.y + Time.deltaTime * 0.5f * (guardRailsUp ? 1 : -1), -0.51f, 0),
                 guardRail.GetComponent<Transform>().localPosition.z
                 );
-            Debug.Log(guardRail.GetComponent<Transform>().localPosition.y);
         }
     }
 

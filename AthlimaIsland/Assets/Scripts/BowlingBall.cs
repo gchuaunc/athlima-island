@@ -15,17 +15,11 @@ public class BowlingBall : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (onFloor)
-        {
-            timeSinceLastOnFloor = 0;
-        } else
-        {
-            timeSinceLastOnFloor += Time.fixedDeltaTime;
-        }
+        Debug.Log(GetComponent<Rigidbody>().velocity.magnitude);
 
-        if (onFloor && GetComponent<Rigidbody>().velocity.sqrMagnitude > 1)
+        if (onFloor && GetComponent<Rigidbody>().velocity.sqrMagnitude > .1)
         {
-            if (timeSinceLastOnFloor > 1f && !playing)
+            if (timeSinceLastOnFloor > .3f && !playing)
             {
                 playing = true;
                 // Play audio
@@ -41,17 +35,48 @@ public class BowlingBall : MonoBehaviour
                 GetComponents<AudioSource>()[1].Stop();
             }
         }
+
+        if (onFloor)
+        {
+            timeSinceLastOnFloor = 0;
+        }
+        else
+        {
+            timeSinceLastOnFloor += Time.fixedDeltaTime;
+        }
     }
 
     private bool onFloor = false;
 
     private void OnCollisionEnter(Collision collision)
     {
-        onFloor = true;
+        if (collision.collider.CompareTag("Floor"))
+        {
+            onFloor = true;
+        }
+        if (collision.collider.CompareTag("Guard"))
+        {
+            GetComponent<Rigidbody>().velocity = new Vector3(
+                -GetComponent<Rigidbody>().velocity.x, 
+                GetComponent<Rigidbody>().velocity.y, 
+                GetComponent<Rigidbody>().velocity.z);
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.collider.CompareTag("Floor"))
+        {
+            onFloor = true;
+        }
+
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        onFloor = false;
+        if (collision.collider.CompareTag("Floor"))
+        {
+            onFloor = false;
+        }
     }
 }

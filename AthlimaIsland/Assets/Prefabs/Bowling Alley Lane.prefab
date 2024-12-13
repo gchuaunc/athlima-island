@@ -1308,7 +1308,7 @@ GameObject:
   - component: {fileID: 815747216944402652}
   m_Layer: 0
   m_Name: Left Gutter
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 1
@@ -1518,7 +1518,7 @@ GameObject:
   - component: {fileID: 5531600132391925267}
   m_Layer: 0
   m_Name: Right Gutter
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 1
@@ -2042,7 +2042,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2187953138134953563}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 525c145279f3c3c4bba506119abfcb39, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -3531,7 +3531,7 @@ GameObject:
   - component: {fileID: 5967813311482802598}
   m_Layer: 0
   m_Name: Lane
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 1
@@ -4029,7 +4029,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4188102867887028808}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 525c145279f3c3c4bba506119abfcb39, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -5329,7 +5329,7 @@ GameObject:
   - component: {fileID: 5143844722985754674}
   m_Layer: 0
   m_Name: Cube (1)
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
