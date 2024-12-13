@@ -1,5 +1,21 @@
-# athlima-island
+# Athlima Island
 Final Project for COMP 590-172 (VR and Game Development) Fall 2024
+
+Athlima Island is a VR sports simulation game developed for the Meta Quest VR platform. The game's design is inspired from the classic Wii Sports Resort and combines two popular sports--bowling and golf.
+
+See the `AthlimaIsland/` folder for the Unity project.
+
+## Links
+
+- [Demo video (YouTube)](https://www.youtube.com/watch?v=VXwKhjz48Iw)
+
+- [Latest build](https://github.com/gchuaunc/athlima-island/releases/tag/v0.2)
+
+## Controls
+
+- Index trigger: Push button / interact
+- Side trigger: Grab (bowling)
+- Analog stick forward: Teleport to location (golf)
 
 ## Resources
 
