@@ -5,6 +5,12 @@ Athlima Island is a VR sports simulation game developed for the Meta Quest VR pl
 
 See the `AthlimaIsland/` folder for the Unity project.
 
+## Notes on playing
+
+Currently, the only way out of the golf minigame is to complete level 2 and exit using a portal that will appear then. If you don't want to continue, quitting the game and restarting will also work.
+
+We also officially recommend the usage of the guard rails in bowling, as it is incredibly difficult otherwise.
+
 ## Links
 
 - [Demo video (YouTube)](https://www.youtube.com/watch?v=VXwKhjz48Iw)
